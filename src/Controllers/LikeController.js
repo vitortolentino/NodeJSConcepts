@@ -21,7 +21,7 @@ const LikeController = () => {
 
     repositories[repositoryIndex] = newRepository;
 
-    return response.send();
+    return response.json(newRepository);
   }
 
   return {
