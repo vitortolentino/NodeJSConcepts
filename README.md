@@ -31,3 +31,5 @@ Run project in development mode
 Run tests
 
 `$ npm run test` or `$ yarn test`
+
+Made by Vitor Tolentino! Talk to [me](https://www.linkedin.com/in/vitor-rodrigues-dev/).
