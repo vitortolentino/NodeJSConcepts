@@ -1,69 +1,37 @@
-const { uuid } = require("uuidv4");
-const { repositories } = require('../datasource/index.js');
+const RepositoryRepository = require('../Repositories/RepositoryRepository');
+const { handleError } = require('./helpers');
 
 const RepositoryController = () => {
 
   function index(request, response) {
+    const repositories = RepositoryRepository.index();
     return response.json(repositories);
   }
 
   function create(request, response) {
-    const {
-      url,
-      techs,
-      title,
-    } = request.body;
-
-    const repository = {
-      url,
-      techs,
-      title,
-      id: uuid(),
-      likes: 0
-    }
-
-    repositories.push(repository);
-
+    const repository = RepositoryRepository.create(request.body);
     return response.json(repository);
   }
 
   function update(request, response) {
-    const {
-      url,
-      techs,
-      title,
-    } = request.body;
     const { id } = request.params;
+    const dataToUpdate = request.body;
 
-    const findCallback = ({ id: repoId }) => repoId === id;
-    const repositoryIndex = repositories.findIndex(findCallback);
-    if (repositoryIndex < 0) {
-      return response.status(400).send({ error: 'Repository not find' });
+    const newRepository = RepositoryRepository.update(id, dataToUpdate);
+    if (newRepository.error) {
+      return handleError(newRepository, response);
     }
 
-    const findedRepository = repositories[repositoryIndex];
-    const newRepository = {
-      ...findedRepository,
-      url,
-      techs,
-      title
-    };
-    repositories[repositoryIndex] = newRepository;
-
     return response.json(newRepository)
-
   }
 
   function destroy(request, response) {
     const { id } = request.params;
 
-    const findCallback = ({ id: repoId }) => repoId === id;
-    const repositoryIndex = repositories.findIndex(findCallback);
-    if (repositoryIndex < 0) {
-      return response.status(400).send({ error: 'Repository not find' });
+    const deletedRepository = RepositoryRepository.destroy(id);
+    if (deletedRepository.error) {
+      return handleError(deletedRepository, response);
     }
-
-    repositories.splice(repositoryIndex, 1);
 
     return response.status(204).send();
   }

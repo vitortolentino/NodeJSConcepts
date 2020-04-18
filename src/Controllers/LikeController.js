@@ -1,25 +1,16 @@
-const { repositories } = require('../datasource');
+const LikeRepository = require('../Repositories/LikeRepository');
+const { handleError } = require('../Controllers/helpers');
+
 
 const LikeController = () => {
 
   function create(request, response) {
     const { id } = request.params;
 
-    const findCallback = ({ id: repoId }) => repoId === id;
-    const repositoryIndex = repositories.findIndex(findCallback);
-    if (repositoryIndex < 0) {
-      return response.status(400).send({ error: 'Repository not find' });
+    const newRepository = LikeRepository.create(id);
+    if (newRepository.error) {
+      return handleError(newRepository, response);
     }
-
-    const findedRepository = repositories[repositoryIndex];
-    const { likes } = findedRepository;
-
-    const newRepository = {
-      ...findedRepository,
-      likes: likes + 1
-    };
-
-    repositories[repositoryIndex] = newRepository;
 
     return response.json(newRepository);
   }
